@@ -5,7 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "test": "NODE_NO_WARNINGS=1 node --loader=tsm --test ./tests/*.test.ts"
+    "test": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm --test ./tests/*.test.ts"
   },
   "keywords": [],
   "author": "",
