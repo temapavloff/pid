@@ -5,20 +5,20 @@ export const getStopIds = (stopsList: StopsList): string[] => {
 };
 
 export const fetchDepartures = async (stopIds: string[]) => {
-    const params = new URLSearchParams(Object.fromEntries([
-        ['minutesBefore', 10],
-        ['minutesAfter', 60],
+    const params = new URLSearchParams([
+        ['minutesBefore', '10'],
+        ['minutesAfter', '60'],
         ['timeFrom', (new Date()).toISOString()],
-        ['includeMetroTrains', true],
+        ['includeMetroTrains', 'true'],
         ['preferredTimezone', 'Europe/Prague'],
         ['mode', 'departures'],
         ['order', 'real'],
         ['filter', 'routeOnce'],
         ['skip', 'canceled'],
-        ['limit', 100],
-        ['total', 100],
-    ]));
-    stopIds.forEach(id => params.append('ids[]', id));
+        ['limit', '100'],
+        ['total', '100'],
+        ...stopIds.map(id => ['ids[]', id]),
+    ]);
 
     const response = await fetch(`https://api.golemio.cz/v2/pid/departureboards?${params}`, {
         headers: {
