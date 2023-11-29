@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello world</title>
+    <link rel="stylesheet" href="./simple.min.css">
+    <style>
+        body {
+            font-size: 1rem;
+        }
+
+        main {
+            padding-top: 0.5rem;
+        }
+
+        table {
+            margin-top: 0;
+            background: none;
+            border: none;
+            width: 100%;
+        }
+
+        tr {
+            background: none;
+            border: none;
+        }
+
+        td {
+            background: none;
+            border: none;
+            padding-top: 0.1rem;
+            padding-bottom: 0.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main></main>
+</body>
+
+<script>
+    const getDeparture = (now, { short, predicted }) => {
+        if (!predicted) {
+            return short;
+        }
+
+        const predictedTimeStamp = Number(new Date(predicted));
+        const minutes = Math.ceil((predictedTimeStamp - now) / (1000 * 60));
+
+        if (minutes <= 0) {
+            return null;
+        }
+
+        return String(minutes);
+    };
+
+    const mapTypeToEmoji = {
+        metro: '🚇',
+        tram: '🚋',
+        bus: '🚌',
+    };
+    const getEmoji = (type) => mapTypeToEmoji[type] ?? '🤷‍♂️';
+
+    const fetchDepartures = async () => {
+        const response = await fetch('/api/departures', {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error('Someting went wrong');
+        }
+
+        return response.json();
+    };
+
+    const renderTable = (stop) => {
+        const now = Number(new Date());
+        const rows = stop.routes.map(r => (`<tr>
+            <td>${getEmoji(r.vehicleType)} ${r.isNight ? '🌙' : ''}</td>
+            <td>${r.routeNumber} <small>(&rarr; ${r.direction})</small></td>
+            <td>
+                ${r.departures.map(d => getDeparture(now, d)).filter(d => d !== null).join(', ')}
+            </td>
+        </tr>`)).join('');
+
+        return `<strong>${stop.stopName}</strong><br><table>${rows}</table>`;
+    };
+
+    const render = async () => {
+        let content = '';
+        try {
+            const stops = await fetchDepartures();
+            content = stops.map(renderTable).join('\n');
+        } catch (e) {
+            content = `<h2>Ooops! ${e.message}.</h2>`;
+        }
+
+        document.querySelector('main').innerHTML = content;
+    };
+
+
+
+    render();
+
+    setInterval(render, 1000 * 60);
+</script>
+
+</html>

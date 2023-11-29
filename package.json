@@ -5,7 +5,8 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "test": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm --test ./tests/*.test.ts"
+    "test": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm --test ./tests/*.test.ts",
+    "serv": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm ./src/server.ts"
   },
   "keywords": [],
   "author": "",

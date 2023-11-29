@@ -1,14 +1,13 @@
 import * as assert from 'node:assert';
 import test from 'node:test';
-import { fetchDepartures, getStopIds, parseDepartues } from '../src/index';
-import { stopsList } from '../src/stops_list';
+import { fetchDepartures, parseDepartues } from '../src/index';
 
 test('should say hello to the world', () => {
     assert.equal('hello world', 'hello world');
 });
 
 test('should request data from PID API', async () => {
-    const json = await fetchDepartures(getStopIds(stopsList));
+    const json = await fetchDepartures((process.env['STOPS'] ?? '').split(','));
 
     console.log(parseDepartues(json).join('\n'));
 
