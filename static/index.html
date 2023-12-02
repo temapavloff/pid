@@ -9,10 +9,17 @@
     <style>
         body {
             font-size: 1rem;
+            display: initial;
         }
 
         main {
             padding-top: 0.5rem;
+            display: grid;
+            grid-template-columns: 50% 50%;
+        }
+
+        section {
+            border: none;
         }
 
         table {
@@ -33,14 +40,25 @@
             padding-top: 0.1rem;
             padding-bottom: 0.1rem;
         }
+
+        .current_weather {
+            font-size: 3em;
+        }
+
+        .weather_table td {
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    <main></main>
+    <main>
+        <section id="transport"></section>
+        <section id="weather"></section>
+    </main>
 </body>
 
-<script>
+<script type="module">
     const getDeparture = (now, { short, predicted }) => {
         if (!predicted) {
             return short;
@@ -75,7 +93,7 @@
         return response.json();
     };
 
-    const renderTable = (stop) => {
+    const renderTransportTable = (stop) => {
         const now = Number(new Date());
         const rows = stop.routes.map(r => (`<tr>
             <td>${getEmoji(r.vehicleType)} ${r.isNight ? '🌙' : ''}</td>
@@ -88,23 +106,98 @@
         return `<strong>${stop.stopName}</strong><br><table>${rows}</table>`;
     };
 
-    const render = async () => {
+    const renderTransport = async () => {
         let content = '';
         try {
             const stops = await fetchDepartures();
-            content = stops.map(renderTable).join('\n');
+            content = stops.map(renderTransportTable).join('\n');
         } catch (e) {
             content = `<h2>Ooops! ${e.message}.</h2>`;
         }
 
-        document.querySelector('main').innerHTML = content;
+        document.querySelector('#transport').innerHTML = content;
     };
 
+    renderTransport();
 
+    setInterval(renderTransport, 1000 * 60);
+</script>
 
-    render();
+<script type="module">
+    const fetchWeather = async () => {
+        const response = await fetch('/api/weather', {
+            headers: { 'Accept': 'application/json' }
+        });
 
-    setInterval(render, 1000 * 60);
+        if (!response.ok) {
+            throw new Error('Someting went wrong');
+        }
+
+        return response.json();
+    };
+
+    const mapPrecipitationToEmoji = {
+        rain: '🌧️',
+        showers: '🌧️🌧️',
+        snowfall: '❄️',
+    };
+    const getPrecipitationEmoji = (type) => mapPrecipitationToEmoji[type] ?? ' ';
+    const windEmoji = '🌬️';
+
+    const renderPrecipitation = (p) => {
+        if (p.probability === 0) {
+            return '';
+        }
+
+        return `${getPrecipitationEmoji(p.type)} ${Math.ceil(p.probability * 100)}%`;
+    };
+    const rednerTime = (dt) => {
+        const d = new Date(dt);
+        let hours = d.getHours();
+        if (hours < 10) {
+            hours = `0${hours}`;
+        }
+        return `${hours}:00`;
+    }
+
+    const renderWeather = async () => {
+        let content = '';
+        try {
+            const weather = await fetchWeather();
+            const current = `<tr>
+                <td colspan="6" class="current_weather">
+                    <strong>${weather.current.temperature} °C</strong>
+                    &nbsp;
+                    ${renderPrecipitation(weather.current.precipitation)}
+                    &nbsp;
+                    ${windEmoji} ${Math.ceil(weather.current.windSpeed)} m/s
+                </td>
+            </tr>`;
+            const forecast = weather.forecast.map(f => (`<td>
+                <small>${rednerTime(f.time)}</small> <br>
+                <strong>${f.temperature} °C</strong> <br>
+                ${renderPrecipitation(f.precipitation)} <br>
+                ${windEmoji} ${Math.ceil(f.windSpeed)} m/s
+            </td>`)).join('');
+
+            content = `<table class="weather_table">
+                ${current}
+                <tr>${forecast}</tr>
+            </table>`;
+
+            console.log(content);
+
+        } catch (e) {
+            content = `<h2>Ooops! ${e.message}.</h2>`;
+        }
+
+        document.querySelector('#weather').innerHTML = content;
+
+    };
+
+    renderWeather();
+
+    setInterval(renderWeather, 1000 * 60 * 10);
 </script>
 
 </html>

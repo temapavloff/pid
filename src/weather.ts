@@ -40,7 +40,7 @@ export const fetchWeather = async (latitude: string, longitude: string) => {
     const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
 
     if (!response.ok) {
-        throw new Error('Unable to fetch weather data');
+        throw new Error(`Unable to fetch weather data: ${response.status}`);
     }
 
     return response.json() as Promise<WeatherRespons>;
@@ -89,7 +89,7 @@ export const parseWeatherResponse = (w: WeatherRespons): WeatherData => {
     const d = new Date();
     const date = d.getDate();
     const hour = d.getHours();
-    const startIndex = w.hourly.time.findIndex(ds => {
+    const startIndex = 1 + w.hourly.time.findIndex(ds => {
         const d = new Date(ds);
         return date === d.getDate() && hour === d.getHours();
     });
