@@ -136,17 +136,33 @@
         return response.json();
     };
 
+    const mapWeatherCodesToEmoji = {
+        clear: '☀️',
+        partial_cloud: '🌤️',
+        fog: '😶‍🌫️',
+        drizzle: '💧',
+        freezing_drizzle: '🧊',
+        rain: '🌧️',
+        freezing_rain: '🌧️🧊',
+        snow_fall: '🌨️',
+        snow_grains: '❄️',
+        rain_showers: '🌧️🌧️',
+        snow_showers: '🌨️🌨️',
+        thunderstorm: '⛈️',
+        thunderstorm_hail: '⛈️⛈️',
+    };
+
     const mapPrecipitationToEmoji = {
         rain: '🌧️',
         showers: '🌧️🌧️',
-        snowfall: '❄️',
+        snowfall: '🌨️',
     };
     const getPrecipitationEmoji = (type) => mapPrecipitationToEmoji[type] ?? ' ';
     const windEmoji = '🌬️';
 
     const renderPrecipitation = (p) => {
         if (p.probability === 0) {
-            return '';
+            return '☀️';
         }
 
         return `${getPrecipitationEmoji(p.type)} ${Math.ceil(p.probability * 100)}%`;
@@ -159,23 +175,24 @@
         }
         return `${hours}:00`;
     }
+    const renderTemperature = (t) => {
+        return Math.sign(t) * Math.ceil(Math.abs(t));
+    }
 
     const renderWeather = async () => {
         let content = '';
         try {
             const weather = await fetchWeather();
             const current = `<tr>
-                <td colspan="6" class="current_weather">
-                    <strong>${weather.current.temperature} °C</strong>
-                    &nbsp;
-                    ${renderPrecipitation(weather.current.precipitation)}
-                    &nbsp;
+                <td colspan="8" class="current_weather">
+                    <strong>${renderTemperature(weather.current.temperature)}°</strong>
+                    ${mapWeatherCodesToEmoji[weather.current.weatherCode]}
                     ${windEmoji} ${Math.ceil(weather.current.windSpeed)} m/s
                 </td>
             </tr>`;
             const forecast = weather.forecast.map(f => (`<td>
                 <small>${rednerTime(f.time)}</small> <br>
-                <strong>${f.temperature} °C</strong> <br>
+                <strong>${renderTemperature(f.temperature)}°</strong> <br>
                 ${renderPrecipitation(f.precipitation)} <br>
                 ${windEmoji} ${Math.ceil(f.windSpeed)} m/s
             </td>`)).join('');

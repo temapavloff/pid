@@ -3,9 +3,7 @@ export type WeatherRespons = {
         time: string,
         temperature_2m: number,
         wind_speed_10m: number,
-        rain: number,
-        showers: number,
-        snowfall: number,
+        weather_code: number,
     },
     hourly: {
         time: string[],
@@ -31,7 +29,7 @@ export const fetchWeather = async (latitude: string, longitude: string) => {
         ['latitude', latitude],
         ['longitude', longitude],
         ['timezone', 'Europe/Prague'],
-        ['current', 'temperature_2m,wind_speed_10m,rain,showers,snowfall'],
+        ['current', 'temperature_2m,wind_speed_10m,weather_code'],
         ['hourly', 'temperature_2m,relative_humidity_2m,wind_speed_10m,rain,showers,snowfall'],
         ['start_date', getStartDate()],
         ['end_date', getEndDate()],
@@ -60,6 +58,10 @@ const findPrecipitation = (p: Record<PrecipitationType, number>): Precipitation 
     };
 };
 
+type WeatherCode = 'clear' | 'partial_cloud' | 'fog' | 'drizzle'
+    | 'freezing_drizzle' | 'rain' | 'freezing_rain' | 'snow_fall' | 'snow_grains'
+    | 'rain_showers' | 'snow_showers' | 'thunderstorm' | 'thunderstorm_hail';
+
 type WeatherItem = {
     time: string,
     temperature: number,
@@ -67,9 +69,26 @@ type WeatherItem = {
     precipitation: Precipitation,
 };
 type WeatherData = {
-    current: WeatherItem,
+    current: Omit<WeatherItem, 'precipitation'> & { weatherCode: WeatherCode },
     forecast: WeatherItem[],
 };
+
+const parseWeatherCode = (c: number): WeatherCode => {
+    if (c > 0 && c < 4) return 'partial_cloud';
+    if (c > 44 && c < 49) return 'fog';
+    if (c > 50 && c < 56) return 'drizzle';
+    if (c > 55 && c < 57) return 'freezing_drizzle';
+    if (c > 60 && c < 66) return 'rain';
+    if (c > 65 && c < 68) return 'freezing_rain';
+    if (c > 70 && c < 76) return 'snow_fall';
+    if (c === 77) return 'snow_grains';
+    if (c > 79 && c < 83) return 'rain_showers';
+    if (c > 84 && c < 87) return 'snow_showers';
+    if (c === 95) return 'thunderstorm';
+    if (c > 95 && c < 100) return 'thunderstorm_hail';
+
+    return 'clear';
+}
 
 export const parseWeatherResponse = (w: WeatherRespons): WeatherData => {
     const result: WeatherData = {
@@ -77,11 +96,7 @@ export const parseWeatherResponse = (w: WeatherRespons): WeatherData => {
             time: w.current.time,
             temperature: w.current.temperature_2m,
             windSpeed: w.current.wind_speed_10m,
-            precipitation: findPrecipitation({
-                rain: w.current.rain,
-                showers: w.current.showers,
-                snowfall: w.current.snowfall,
-            }),
+            weatherCode: parseWeatherCode(w.current.weather_code),
         },
         forecast: [],
     };
@@ -93,7 +108,7 @@ export const parseWeatherResponse = (w: WeatherRespons): WeatherData => {
         const d = new Date(ds);
         return date === d.getDate() && hour === d.getHours();
     });
-    const endIndex = startIndex + 6;
+    const endIndex = startIndex + 8;
 
     for (let i = startIndex; i < endIndex; i += 1) {
         result.forecast.push({
