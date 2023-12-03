@@ -18,7 +18,7 @@ const STATIC_PATH = path.join(process.cwd(), "./static");
 
 const toBool = [() => true, () => false];
 
-const prepareFile = async (url: string) => {
+export const prepareFile = async (url: string) => {
     const paths = [STATIC_PATH, url];
     if (url.endsWith("/")) paths.push("index.html");
     const filePath = path.join(...paths);

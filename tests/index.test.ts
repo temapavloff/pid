@@ -1,7 +1,7 @@
 import * as assert from 'node:assert';
 import test from 'node:test';
-import { fetchDepartures, parseDepartues } from '../src/index';
-import { fetchWeather, parseWeatherResponse } from '../src/weather';
+import { fetchDepartures, parseDepartues } from '../src/services/pid/index';
+import { fetchWeather, parseWeatherResponse } from '../src/services/weather/index';
 
 test('should say hello to the world', () => {
     assert.equal('hello world', 'hello world');
