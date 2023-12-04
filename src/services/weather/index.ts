@@ -108,7 +108,7 @@ export const parseWeatherResponse = (w: WeatherRespons): WeatherData => {
         const d = new Date(ds);
         return date === d.getDate() && hour === d.getHours();
     });
-    const endIndex = startIndex + 8;
+    const endIndex = startIndex + 6;
 
     for (let i = startIndex; i < endIndex; i += 1) {
         result.forecast.push({

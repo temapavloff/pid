@@ -13,13 +13,13 @@
         }
 
         main {
-            padding-top: 0.5rem;
-            display: grid;
-            grid-template-columns: 50% 50%;
+            padding: 0;
         }
 
         section {
             border: none;
+            padding: 0;
+            margin: 0 0 1rem 0;
         }
 
         table {
@@ -32,6 +32,18 @@
         tr {
             background: none;
             border: none;
+        }
+
+        tr:nth-child(even) {
+            background: none;
+        }
+
+        tr.accent {
+            background-color: var(--accent-bg);
+        }
+
+        tr.stop td {
+            padding-top: 1rem;
         }
 
         td {
@@ -48,13 +60,19 @@
         .weather_table td {
             text-align: center;
         }
+
+        .departures {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
 <body>
     <main>
-        <section id="transport"></section>
         <section id="weather"></section>
+        <section id="transport"></section>
     </main>
 </body>
 
@@ -95,22 +113,24 @@
 
     const renderTransportTable = (stop) => {
         const now = Number(new Date());
-        const rows = stop.routes.map(r => (`<tr>
+        const rows = stop.routes.map((r, index) => (`<tr class=${index % 2 === 0 ? '' : 'accent'}>
             <td>${getEmoji(r.vehicleType)} ${r.isNight ? '🌙' : ''}</td>
             <td>${r.routeNumber} <small>(&rarr; ${r.direction})</small></td>
             <td>
-                ${r.departures.map(d => getDeparture(now, d)).filter(d => d !== null).join(', ')}
+                <div class="departures">
+                    ${r.departures.filter((_, i) => i < 5).map(d => getDeparture(now, d)).filter(d => d !== null).join(', ')}
+                </div>
             </td>
         </tr>`)).join('');
 
-        return `<strong>${stop.stopName}</strong><br><table>${rows}</table>`;
+        return `<tr class="stop"><td colspan="3"><strong>${stop.stopName}</strong></td></tr>${rows}`;
     };
 
     const renderTransport = async () => {
         let content = '';
         try {
             const stops = await fetchDepartures();
-            content = stops.map(renderTransportTable).join('\n');
+            content = `<table>${stops.map(renderTransportTable).join('\n')}</table>`
         } catch (e) {
             content = `<h2>Ooops! ${e.message}.</h2>`;
         }
@@ -184,25 +204,23 @@
         try {
             const weather = await fetchWeather();
             const current = `<tr>
-                <td colspan="8" class="current_weather">
+                <td colspan="6" class="current_weather">
                     <strong>${renderTemperature(weather.current.temperature)}°</strong>
                     ${mapWeatherCodesToEmoji[weather.current.weatherCode]}
-                    ${windEmoji} ${Math.ceil(weather.current.windSpeed)} m/s
+                    <small>${windEmoji} ${Math.ceil(weather.current.windSpeed)} m/s</small>
                 </td>
             </tr>`;
             const forecast = weather.forecast.map(f => (`<td>
                 <small>${rednerTime(f.time)}</small> <br>
                 <strong>${renderTemperature(f.temperature)}°</strong> <br>
                 ${renderPrecipitation(f.precipitation)} <br>
-                ${windEmoji} ${Math.ceil(f.windSpeed)} m/s
+                <small>${windEmoji} ${Math.ceil(f.windSpeed)} m/s</small>
             </td>`)).join('');
 
             content = `<table class="weather_table">
                 ${current}
                 <tr>${forecast}</tr>
             </table>`;
-
-            console.log(content);
 
         } catch (e) {
             content = `<h2>Ooops! ${e.message}.</h2>`;
