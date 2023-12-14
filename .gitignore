@@ -2,3 +2,4 @@ dist
 node_modules
 .env*
 src/stops_list.ts
+.DS_Store
