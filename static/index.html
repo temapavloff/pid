@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
+    <script src="https://kit.fontawesome.com/7942546cd6.js" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello world</title>
+    <title>Sweet home</title>
     <link rel="stylesheet" href="/simple.min.css">
     <style>
         body {
@@ -94,11 +95,11 @@
     };
 
     const mapTypeToEmoji = {
-        metro: '🚇',
-        tram: '🚋',
-        bus: '🚌',
+        metro: '<i class="fa-solid fa-train"></i>',
+        tram: '<i class="fa-solid fa-train-tram"></i>',
+        bus: '<i class="fa-solid fa-bus"></i>',
     };
-    const getEmoji = (type) => mapTypeToEmoji[type] ?? '🤷‍♂️';
+    const getEmoji = (type) => mapTypeToEmoji[type] ?? '<i class="fa-solid fa-question"></i>';
 
     const fetchDepartures = async () => {
         const response = await fetch('/api/departures', {
@@ -115,7 +116,7 @@
     const renderTransportTable = (stop) => {
         const now = Number(new Date());
         const rows = stop.routes.map((r, index) => (`<tr class=${index % 2 === 0 ? '' : 'accent'}>
-            <td>${getEmoji(r.vehicleType)} ${r.isNight ? '🌙' : ''}</td>
+            <td>${getEmoji(r.vehicleType)} ${r.isNight ? '<i class="fa-solid fa-moon"></i>' : ''}</td>
             <td>${r.routeNumber} <small>(&rarr; ${r.direction})</small></td>
             <td>
                 <div class="departures">
@@ -158,32 +159,32 @@
     };
 
     const mapWeatherCodesToEmoji = {
-        clear: '☀️',
-        partial_cloud: '🌤️',
-        fog: '😶‍🌫️',
-        drizzle: '💧',
-        freezing_drizzle: '🧊',
-        rain: '🌧️',
-        freezing_rain: '🌧️🧊',
-        snow_fall: '🌨️',
-        snow_grains: '❄️',
-        rain_showers: '🌧️🌧️',
-        snow_showers: '🌨️🌨️',
-        thunderstorm: '⛈️',
-        thunderstorm_hail: '⛈️⛈️',
+        clear: '<i class="fa-solid fa-sun"></i>',
+        partial_cloud: '<i class="fa-solid fa-cloud-sun"></i>',
+        fog: '<i class="fa-solid fa-smog"></i>',
+        drizzle: '<i class="fa-solid fa-droplet"></i>',
+        freezing_drizzle: '<i class="fa-solid fa-icicles"></i>',
+        rain: '<i class="fa-solid fa-cloud-rain"></i>',
+        freezing_rain: '<i class="fa-solid fa-droplet"></i><i class="fa-solid fa-icicles"></i>',
+        snow_fall: '<i class="fa-regular fa-snowflake"></i>',
+        snow_grains: '<i class="fa-regular fa-snowflake"></i>',
+        rain_showers: '<i class="fa-solid fa-cloud-rain"></i><i class="fa-solid fa-cloud-rain"></i>',
+        snow_showers: '<i class="fa-regular fa-snowflake"></i><i class="fa-regular fa-snowflake"></i>',
+        thunderstorm: '<i class="fa-solid fa-cloud-bolt"></i>',
+        thunderstorm_hail: '<i class="fa-solid fa-cloud-bolt"></i><i class="fa-solid fa-cloud-bolt"></i>',
     };
 
     const mapPrecipitationToEmoji = {
-        rain: '🌧️',
-        showers: '🌧️🌧️',
-        snowfall: '🌨️',
+        rain: '<i class="fa-solid fa-cloud-rain"></i>',
+        showers: '<i class="fa-regular fa-snowflake"></i><i class="fa-regular fa-snowflake"></i>',
+        snowfall: '<i class="fa-regular fa-snowflake"></i>',
     };
     const getPrecipitationEmoji = (type) => mapPrecipitationToEmoji[type] ?? ' ';
-    const windEmoji = '🌬️';
+    const windEmoji = '<i class="fa-solid fa-wind"></i>';
 
     const renderPrecipitation = (p) => {
         if (p.probability === 0) {
-            return '☀️';
+            return '<i class="fa-solid fa-sun"></i>';
         }
 
         return `${getPrecipitationEmoji(p.type)} ${Math.ceil(p.probability * 100)}%`;
