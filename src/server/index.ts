@@ -15,7 +15,7 @@ const handler: RequestListener = async (req, res) => {
             return;
         }
 
-        handleStaticFile(req, res);
+        await handleStaticFile(req, res);
     } catch (e) {
         const file = await prepareFile('/500.html');
         res.writeHead(500, { 'Content-Type': 'text/html' });
