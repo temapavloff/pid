@@ -1,0 +1,60 @@
+body {
+    font-size: 1rem;
+    display: initial;
+}
+
+main {
+    padding: 0;
+    margin-right: 20%;
+}
+
+section {
+    border: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+table {
+    margin-top: 0;
+    background: none;
+    border: none;
+    width: 100%;
+}
+
+tr {
+    background: none;
+    border: none;
+}
+
+tr:nth-child(even) {
+    background: none;
+}
+
+tr.accent {
+    background-color: var(--accent-bg);
+}
+
+tr.stop td {
+    padding-top: 1rem;
+}
+
+td {
+    background: none;
+    border: none;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+}
+
+.current_weather {
+    font-size: 3em;
+}
+
+.weather_table td {
+    text-align: center;
+}
+
+.departures {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

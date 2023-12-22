@@ -26,7 +26,7 @@ export const fetchDepartures = async (stopIds: string[]) => {
     return response.json() as Promise<Departureboards>;
 };
 
-type VehicleType = 'metro' | 'tram' | 'bus';
+export type VehicleType = 'metro' | 'tram' | 'bus';
 
 const routeTypesMap: Record<number, VehicleType> = {
     1: 'metro',
@@ -50,12 +50,12 @@ export const parseDepartues = (deps: Departureboards): string[] => {
     ));
 };
 
-type Departure = {
+export type Departure = {
     short: string,
     predicted: string | null,
 };
 
-type Route = {
+export type Route = {
     stopId: string,
     vehicleType: VehicleType,
     routeNumber: string,
@@ -65,7 +65,7 @@ type Route = {
     isNight: boolean,
 };
 
-type Stop = {
+export type Stop = {
     stopId: string,
     stopName: string,
     routes: Route[],

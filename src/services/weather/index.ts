@@ -44,8 +44,8 @@ export const fetchWeather = async (latitude: string, longitude: string) => {
     return response.json() as Promise<WeatherRespons>;
 }
 
-type PrecipitationType = 'rain' | 'showers' | 'snowfall';
-type Precipitation = {
+export type PrecipitationType = 'rain' | 'showers' | 'snowfall';
+export type Precipitation = {
     type: PrecipitationType,
     probability: number,
 };
@@ -58,17 +58,17 @@ const findPrecipitation = (p: Record<PrecipitationType, number>): Precipitation 
     };
 };
 
-type WeatherCode = 'clear' | 'partial_cloud' | 'fog' | 'drizzle'
+export type WeatherCode = 'clear' | 'partial_cloud' | 'fog' | 'drizzle'
     | 'freezing_drizzle' | 'rain' | 'freezing_rain' | 'snow_fall' | 'snow_grains'
     | 'rain_showers' | 'snow_showers' | 'thunderstorm' | 'thunderstorm_hail';
 
-type WeatherItem = {
+export type WeatherItem = {
     time: string,
     temperature: number,
     windSpeed: number,
     precipitation: Precipitation,
 };
-type WeatherData = {
+export type WeatherData = {
     current: Omit<WeatherItem, 'precipitation'> & { weatherCode: WeatherCode },
     forecast: WeatherItem[],
 };
