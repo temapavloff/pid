@@ -8,6 +8,9 @@ import { Transport } from '../views/components/transport'
 import { getDepartures } from '../services/pid/index';
 import { getWeather } from '../services/weather/index';
 import { ApiContext } from '../contexts/api';
+import { createReadStream, readFileSync } from 'fs'
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
 
 const apiContextValue = { getDepartures, getWeather };
 
@@ -43,6 +46,17 @@ app.get('/transport', c => c.html(
         <Transport stopIds={stopIds} />
     </ApiContext.Provider>
 ));
+
+const staticPath = resolve(fileURLToPath(import.meta.url), '..', '..', '..', 'static');
+
+app.notFound((c) => {
+    return c.html(readFileSync(resolve(staticPath, '404.html'), { encoding: 'utf-8' }));
+});
+
+app.onError((err, c) => {
+    console.error(err);
+    return c.html(readFileSync(resolve(staticPath, '500.html'), { encoding: 'utf-8' }));
+})
 
 const port = Number(process.env['SERVER_POST'] ?? '8080');
 
