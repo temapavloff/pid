@@ -6,19 +6,21 @@ import { Transport } from './components/transport';
 
 const Fallback = () => <h2>Ooops!</h2>;
 
+const Loading = () => <h2>Loading...</h2>
+
 export const Index: FC = () => (
     <Layout>
         <main>
             <section id="weather">
                 <ErrorBoundary fallback={<Fallback />}>
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<Loading />}>
                         <Weather />
                     </Suspense>
                 </ErrorBoundary>
             </section>
             <section id="transport">
                 <ErrorBoundary fallback={<Fallback />}>
-                    <Suspense fallback={<div>Loading...</div>}>
+                    <Suspense fallback={<Loading />}>
                         <Transport />
                     </Suspense>
                 </ErrorBoundary>

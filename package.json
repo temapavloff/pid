@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm --test ./tests/*.test.ts",
-    "serv": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm ./src/index.ts",
-    "hono": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm ./src/hono/index.tsx"
+    "hono": "NODE_NO_WARNINGS=1 node --env-file=./.env --loader=tsm ./src/hono/index.tsx",
+    "watch": "NODE_NO_WARNINGS=1 node --watch --env-file=./.env --loader=tsm ./src/hono/index.tsx"
   },
   "keywords": [],
   "author": "",
