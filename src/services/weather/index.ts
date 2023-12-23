@@ -125,3 +125,9 @@ export const parseWeatherResponse = (w: WeatherRespons): WeatherData => {
 
     return result;
 };
+
+export const getWeather = async (latitude: string, longitude: string) => {
+    return parseWeatherResponse(await fetchWeather(latitude, longitude));
+}
+
+export type GetWeather = typeof getWeather;

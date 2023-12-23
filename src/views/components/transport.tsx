@@ -1,7 +1,6 @@
-import { FC } from 'hono/jsx'
+import { FC, useContext } from 'hono/jsx'
 import { Departure, Stop, VehicleType, fetchDepartures, parseDepartuesToJson } from '../../services/pid/index'
-
-const stops = (process.env['STOPS'] ?? '').split(',').map(s => s.trim());
+import { ApiContext } from '../../contexts/api';
 
 const getDeparture = (now: number, { short, predicted }: Departure) => {
     if (!predicted) {
@@ -40,9 +39,9 @@ const renderTransportTable = (stop: Stop) => {
     return <><tr class="stop"><td colspan={3}><strong>{stop.stopName}</strong></td></tr>{rows}</>;
 };
 
-export const Transport: FC = async () => {
-    const response = await fetchDepartures(stops);
-    const departures = parseDepartuesToJson(response);
+export const Transport: FC<{ stopIds: string[] }> = async ({ stopIds }) => {
+    const { getDepartures } = useContext(ApiContext);
+    const departures = await getDepartures(stopIds);
 
     return <table>{departures.map(renderTransportTable)}</table>;
 }

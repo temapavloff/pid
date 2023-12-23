@@ -1,7 +1,6 @@
-import { FC } from 'hono/jsx'
+import { FC, useContext } from 'hono/jsx'
 import { Precipitation, PrecipitationType, fetchWeather, parseWeatherResponse } from '../../services/weather/index';
-
-const [latitude, longitude] = (process.env['COORDINATES'] ?? ',').split(',');
+import { ApiContext } from '../../contexts/api';
 
 const mapWeatherCodesToEmoji = {
     clear: <i class="fa-solid fa-sun" />,
@@ -48,9 +47,9 @@ const renderTemperature = (t: number) => {
     return Math.sign(t) * Math.ceil(Math.abs(t));
 }
 
-export const Weather: FC = async () => {
-    const response = await fetchWeather(latitude, longitude);
-    const data = parseWeatherResponse(response);
+export const Weather: FC<{ latitude: string, longitude: string }> = async ({ latitude, longitude }) => {
+    const { getWeather } = useContext(ApiContext);
+    const data = await getWeather(latitude, longitude);
 
     const current = <tr>
         <td colspan={6} class="current_weather">

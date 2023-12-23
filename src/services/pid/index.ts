@@ -122,3 +122,9 @@ export const parseDepartuesToJson = (deps: Departureboards) => {
 
     return Object.values(groupsByStop).sort(compare);
 };
+
+export const getDepartures = async (stopIds: string[]) => {
+    return parseDepartuesToJson(await fetchDepartures(stopIds));
+}
+
+export type GetDepartures = typeof getDepartures;
